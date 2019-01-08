@@ -59,8 +59,7 @@ services:
     environment:
       - ALLOW_IP_RANGE=0.0.0.0/0
       - POSTGRES_USER=docker
-      - POSTGRES_DBNAME=geopoppy
-      - POSTGRES_DUMP=geopoppy.sql
+      - POSTGRES_DBNAME=gis
     volumes:
       - postgres:/var/lib/postgresql
     labels:
@@ -74,8 +73,6 @@ services:
   pgadmin4:
     image: chorss/docker-pgadmin4
     restart: on-failure
-    ports:
-      - 5050:5050
     volumes:
       - pgadmin4:/data
     labels:
