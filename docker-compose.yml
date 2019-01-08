@@ -62,7 +62,8 @@ services:
       - POSTGRES_DBNAME=gis
       - POSTGRES_PASSWORD=mypassword     
     volumes:
-      - postgres:/var/lib/postgresql
+      - 
+      - ./postgis/postgresql:/var/run/postgresql
     labels:
       - traefik.backend=postgis
       - traefik.frontend.rule=Host:postgis.officinecartografiche.net
