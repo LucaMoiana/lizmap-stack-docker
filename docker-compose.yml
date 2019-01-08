@@ -1,8 +1,3 @@
-
-# Rename to docker-compose.yml
-# play with HYPRIOT-OS-32bits : https://blog.hypriot.com/downloads/
-# Flash microSD with etcher: https://etcher.io/
-# MAINTAINER Julien Ancelin <julien.ancelin@inra.fr>
 version: '3.2'
 
 networks:
