@@ -60,6 +60,7 @@ services:
       - ALLOW_IP_RANGE=0.0.0.0/0
       - POSTGRES_USER=docker
       - POSTGRES_DBNAME=gis
+      - POSTGRES_PASSWORD=mypassword     
     volumes:
       - postgres:/var/lib/postgresql
     labels:
@@ -73,6 +74,9 @@ services:
   pgadmin4:
     image: chorss/docker-pgadmin4
     restart: on-failure
+    environment:
+      - PGADMIN_SETUP_EMAIL=youremail@yourdomain.com
+      - PGADMIN_SETUP_PASSWORD=yoursecurepassword
     volumes:
       - pgadmin4:/data
     labels:
