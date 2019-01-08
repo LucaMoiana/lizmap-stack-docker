@@ -68,7 +68,7 @@ services:
     restart: always
     environment:
       POSTGRES_HOST: db
-      POSTGRES_PASSWORD: timoria
+      POSTGRES_PASSWORD: secretpassword
       POSTGRES_DB: nextcloud
       POSTGRES_USER: docker
     labels:
@@ -92,7 +92,7 @@ services:
       ALLOW_IP_RANGE: 0.0.0.0/0
       POSTGRES_USER: docker
       POSTGRES_DBNAME: gis
-      POSTGRES_PASSWORD: timoria
+      POSTGRES_PASSWORD: secretpassword
     volumes:
       - ${PWD}/docker/postgis/postgresql:/var/lib/postgresql
       - ${PWD}/docker/postgis/home/:/home
