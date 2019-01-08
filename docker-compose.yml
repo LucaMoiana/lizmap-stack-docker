@@ -1,0 +1,108 @@
+version: "3"
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false
+
+services:
+  lizmap:
+    image: jancelin/docker-lizmap:3.2rc6
+    restart: on-failure
+    labels:
+      - traefik.backend=lizmap
+      - traefik.frontend.rule=Host:lizmap.officinecartografiche.net
+      - traefik.docker.network=web
+      - traefik.port=80
+    networks:
+      - internal
+      - web
+    volumes:
+     - project:/home
+     - var:/var/www/websig/lizmap/var
+    depends_on:
+      - postgis
+      - qgiserver
+      - redis
+    links:
+     - qgiserver:qgiserver
+     - redis:redis
+  qgiserver:
+    image: jancelin/qgis-server:2.18LTR
+    restart: on-failure
+    volumes:
+      - project:/home
+    labels:
+      - traefik.backend=qgiserver
+      - traefik.frontend.rule=Host:qgiserver.officinecartografiche.net
+      - traefik.docker.network=web
+      - traefik.port=80
+    networks:
+      - internal
+      - web
+  redis:
+    image: redis:alpine
+    restart: on-failure
+    volumes:
+      - redis:/data
+    labels:
+      - traefik.backend=redis
+      - traefik.frontend.rule=Host:redis.officinecartografiche.net
+      - traefik.docker.network=web
+      - traefik.port=6379
+    networks:
+      - internal
+      - web
+  postgis:
+    image: kartoza/postgis:10.0-2.4
+    environment:
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      - POSTGRES_USER=docker
+      - POSTGRES_DBNAME=geopoppy
+      - POSTGRES_DUMP=geopoppy.sql
+    volumes:
+      - postgres:/var/lib/postgresql
+    labels:
+      - traefik.backend=postgis
+      - traefik.frontend.rule=Host:postgis.officinecartografiche.net
+      - traefik.docker.network=web
+      - traefik.port=5432
+    networks:
+      - internal
+      - web
+  pgadmin4:
+    image: chorss/docker-pgadmin4
+    restart: on-failure
+    ports:
+      - 5050:5050
+    volumes:
+      - pgadmin4:/data
+    labels:
+      - traefik.backend=pgadmin
+      - traefik.frontend.rule=Host:pgadmin.officinecartografiche.net
+      - traefik.docker.network=web
+      - traefik.port=5050
+    networks:
+      - internal
+      - web
+  cloud:
+    image: coderaiser/cloudcmd:latest-alpine
+    restart: always
+    volumes:
+#      - ~:/root
+      - project:/mnt/fs
+    labels:
+      - traefik.backend=cloud
+      - traefik.frontend.rule=Host:cloud.officinecartografiche.net
+      - traefik.docker.network=web
+      - traefik.port=8000
+    networks:
+      - internal
+      - web
+volumes:
+   pgadmin4:
+   postgres:
+   redis:
+   var:
+   project:
