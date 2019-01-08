@@ -1,4 +1,9 @@
-version: "3"
+
+# Rename to docker-compose.yml
+# play with HYPRIOT-OS-32bits : https://blog.hypriot.com/downloads/
+# Flash microSD with etcher: https://etcher.io/
+# MAINTAINER Julien Ancelin <julien.ancelin@inra.fr>
+version: '3.2'
 
 networks:
   web:
@@ -10,101 +15,92 @@ services:
   lizmap:
     image: jancelin/docker-lizmap:3.2rc6
     restart: on-failure
-    labels:
-      - traefik.backend=lizmap
-      - traefik.frontend.rule=Host:lizmap.officinecartografiche.net
-      - traefik.docker.network=web
-      - traefik.port=80
-    networks:
-      - internal
-      - web
     volumes:
-     - project:/home
-     - var:/var/www/websig/lizmap/var
+     - ${PWD}/docker/lizmap/project:/home
+     - ${PWD}/docker/lizmap/var:/var/www/websig/lizmap/var
     depends_on:
       - postgis
       - qgiserver
       - redis
+    labels:
+     traefik.backend: "lizmap"
+     traefik.enable: "true"
+     traefik.backend: "lizmap"
+     traefik.frontend.rule: "Host: lizmap.officinecartografiche.net"
+     traefik.docker.network: "web"
     links:
      - qgiserver:qgiserver
      - redis:redis
+    networks:
+      - internal
+      - web
   qgiserver:
-    image: jancelin/qgis-server:2.18LTR
-    restart: on-failure
+    image: kartoza/qgis-server:3.0.3
+    hostname: qgiserver
+    environment:
+      PGSERVICEFILE: /srv/etc/pg_service.conf
+      QGSRV_CACHE_ROOTDIR: /srv/projects
+      QGSRV_CACHE_SIZE: '20'
+      QGSRV_LOGGING_LEVEL: DEBUG
+      QGSRV_USER: 1000:1000
+      ROUTER_HOST: map
+      QGIS_PROJECT_FILE: /project/project.qgs
+      QGIS_SERVER_LOG_LEVEL: 0
     volumes:
-      - project:/home
+      - ${PWD}/docker/qgiserver/qgis:/srv/projects
+      - ${PWD}/docker/qgiserver/etc:/srv/etc:ro
+      - ${PWD}/docker/qgiserver/wps-data:/srv/data
+    restart: unless-stopped
     labels:
-      - traefik.backend=qgiserver
-      - traefik.frontend.rule=Host:qgiserver.officinecartografiche.net
-      - traefik.docker.network=web
-      - traefik.port=80
+     traefik.backend: "qgiserver"
+     traefik.enable: "true"
+     traefik.backend: "qgiserver"
+     traefik.frontend.rule: "Host: qgiserver.officinecartografiche.net"
+     traefik.docker.network: "web"
     networks:
       - internal
-      - web
+      - web 
   redis:
-    image: redis:alpine
-    restart: on-failure
+    image: redis:4
     volumes:
-      - redis:/data
-    labels:
-      - traefik.backend=redis
-      - traefik.frontend.rule=Host:redis.officinecartografiche.net
-      - traefik.docker.network=web
-      - traefik.port=6379
-    networks:
-      - internal
-      - web
-  postgis:
-    image: kartoza/postgis:10.0-2.4
-    environment:
-      - ALLOW_IP_RANGE=0.0.0.0/0
-      - POSTGRES_USER=docker
-      - POSTGRES_DBNAME=gis
-      - POSTGRES_PASSWORD=mypassword     
-    volumes:
-      - 
-      - ./postgis/postgresql:/var/run/postgresql
-    labels:
-      - traefik.backend=postgis
-      - traefik.frontend.rule=Host:postgis.officinecartografiche.net
-      - traefik.docker.network=web
-      - traefik.port=5432
-    networks:
-      - internal
-      - web
-  pgadmin4:
-    image: chorss/docker-pgadmin4
-    restart: on-failure
-    environment:
-      - PGADMIN_SETUP_EMAIL=youremail@yourdomain.com
-      - PGADMIN_SETUP_PASSWORD=yoursecurepassword
-    volumes:
-      - pgadmin4:/data
-    labels:
-      - traefik.backend=pgadmin
-      - traefik.frontend.rule=Host:pgadmin.officinecartografiche.net
-      - traefik.docker.network=web
-      - traefik.port=5050
+      - ${PWD}/docker/redis:/data
+    restart: unless-stopped
     networks:
       - internal
       - web
   cloud:
-    image: coderaiser/cloudcmd:latest-alpine
+    image: nextcloud:latest
     restart: always
-    volumes:
-#      - ~:/root
-      - project:/mnt/fs
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PASSWORD: timoria
+      POSTGRES_DB: nextcloud
+      POSTGRES_USER: docker
     labels:
-      - traefik.backend=cloud
-      - traefik.frontend.rule=Host:cloud.officinecartografiche.net
-      - traefik.docker.network=web
-      - traefik.port=8000
+     traefik.backend: "nextcloud"
+     traefik.enable: "true"
+     traefik.backend: "nextcloud"
+     traefik.frontend.rule: "Host: cloud.officinecartografiche.net"
+     traefik.docker.network: "web"
+    volumes:
+      - ${PWD}/docker/nextcloud:/var/www/html
+      - ${PWD}/docker/lizmap/project:/data:rw
     networks:
       - internal
       - web
-volumes:
-   pgadmin4:
-   postgres:
-   redis:
-   var:
-   project:
+  postgis:
+    image: mdillon/postgis
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      ALLOW_IP_RANGE: 0.0.0.0/0
+      POSTGRES_USER: docker
+      POSTGRES_DBNAME: gis
+      POSTGRES_PASSWORD: timoria
+    volumes:
+      - ${PWD}/docker/postgis/postgresql:/var/lib/postgresql
+      - ${PWD}/docker/postgis/home/:/home
+    networks:
+      - internal
+      - web
