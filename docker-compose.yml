@@ -54,7 +54,7 @@ services:
      traefik.docker.network: "web"
     networks:
       - internal
-      - web 
+      - web
   redis:
     image: redis:4
     volumes:
@@ -68,9 +68,9 @@ services:
     restart: always
     environment:
       POSTGRES_HOST: postgis
-      POSTGRES_PASSWORD: secretpassword
-      POSTGRES_DB: mynextcloud
-      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: 'secretpassword'
+      POSTGRES_DB: 'nextcloud'
+      POSTGRES_USER: 'postgres'
       NEXTCLOUD_ADMIN_USER: admin
       NEXTCLOUD_ADMIN_PASSWORD: secretpassword
     depends_on:
@@ -94,12 +94,14 @@ services:
       - 5432:5432
     environment:
       ALLOW_IP_RANGE: 0.0.0.0/0
-      POSTGRES_USER: docker
+      POSTGRES_USER: postgres
       POSTGRES_DBNAME: gis
       POSTGRES_PASSWORD: secretpassword
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - ${PWD}/docker/postgis/postgresql:/var/lib/postgresql
       - ${PWD}/docker/postgis/home/:/home
+      - ${PWD}/docker/postgis/pgdata:/var/lib/postgresql/data/pgdata
     networks:
       - internal
       - web
