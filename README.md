@@ -8,7 +8,7 @@ I wanted to revamp my website (officinecartografiche.net) with some services:
 all served with subdomains
 Following this [DigitalOcean tutorial](https://www.digitalocean.com/community/tutorials/how-to-use-traefik-as-a-reverse-proxy-for-docker-containers-on-ubuntu-18-04)
 
-I set up [traefik] (https://traefik.io/)a modern reverse proxy to easily manage subdomains.
+I set up [traefik] (https://traefik.io/) a modern reverse proxy to easily manage subdomains.
 
 I pulled [jancelin/docker-lizmap] (https://github.com/jancelin/docker-lizmap) docker-compose repo on my github and started playing around in order to:
 * set traefik labels
