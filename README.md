@@ -20,4 +20,16 @@ What I need to do:
 2. test lizmap with a sample [project] (https://github.com/jancelin/docker-lizmap/tree/master/files/qgis)
 3. parameters tune up
 
+Docker-compose list:
+Traefik
+Portainer
+NGINX
+Gunicorn
+Postgis
+Lizmap
+QgisServer
+Redis
+Geonode
+Nextcloud
+
 SUGGESTIONS ARE WELCOME
