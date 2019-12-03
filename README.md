@@ -23,12 +23,10 @@ Docker-compose list:
 Traefik
 Portainer
 NGINX
-Gunicorn
 Postgis
 Lizmap
 QgisServer
 Redis
 Geonode
-Nextcloud
 
 SUGGESTIONS ARE WELCOME
