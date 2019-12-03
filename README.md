@@ -12,8 +12,7 @@ I set up [traefik] (https://traefik.io/) a modern reverse proxy to easily manage
 
 I pulled [jancelin/docker-lizmap] (https://github.com/jancelin/docker-lizmap) docker-compose repo on my github and started playing around in order to:
 * set traefik labels
-* use nextcloud insted of [cloudcmd] (http://cloudcmd.io/) (probably the worng choice)
-for the moment it's up and running!
+
 
 What I need to do:
 1. find out how to upload file into Lizmap project folder usign nextcloud
