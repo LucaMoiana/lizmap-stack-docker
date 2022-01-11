@@ -17,6 +17,7 @@ I pulled [jancelin/docker-lizmap] (https://github.com/jancelin/docker-lizmap) do
 What I need to do:
 
 ~~1. find out how to upload file into Lizmap project folder usign nextcloud~~
+
 ~~2. test lizmap with a sample [project] (https://github.com/jancelin/docker-lizmap/tree/master/files/qgis)~~
 
 3. parameters tune up
